@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Control Civil Minero</title>
+    <title>Control Civil Minero (Modo Local)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -54,13 +54,13 @@
 </head>
 <body class="bg-mining-900 text-slate-200 min-h-screen flex flex-col">
 
-    <nav id="mainNav" class="bg-mining-800 border-b border-mining-700 p-4 shadow-lg z-50 sticky top-0 hidden">
+    <nav id="mainNav" class="bg-mining-800 border-b border-mining-700 p-4 shadow-lg z-50 sticky top-0">
         <div class="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-3">
             
             <div class="flex items-center gap-4">
                 <h1 class="text-xl font-bold text-white flex items-center gap-2">
                     <i class="fa-solid fa-helmet-safety text-mining-accent"></i> 
-                    UTE-CP2 <span id="userInfo" class="text-xs font-normal text-slate-400 hidden sm:inline">| Gestión de Obra</span>
+                    UTE-CP2 <span id="userInfo" class="text-xs font-normal text-slate-400 hidden sm:inline">| GESTIÓN DE OBRA (MODO LOCAL)</span>
                 </h1>
             </div>
             
@@ -87,31 +87,9 @@
 
     <main class="flex-1 max-w-4xl mx-auto w-full p-4 md:p-8">
         
-        <section id="viewLogin" class="fade-in hidden flex flex-col items-center justify-center min-h-[70vh]">
-            <div class="max-w-sm mx-auto w-full bg-mining-800 rounded-xl border border-mining-700 shadow-2xl p-8 space-y-6">
-                <h2 class="text-3xl font-bold text-white text-center flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-user-lock text-mining-accent"></i> 
-                    Acceso al Sistema
-                </h2>
-                <p class="text-sm text-slate-400 text-center">Ingrese sus credenciales para acceder a la gestión de obra.</p>
-
-                <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
-                    
-                    <div class="space-y-1">
-                        <label for="loginEmail" class="text-xs text-slate-400 font-bold uppercase">Correo Electrónico</label>
-                        <input type="email" id="loginEmail" required class="w-full bg-mining-900 border border-mining-700 p-3 rounded text-white focus:border-mining-accent outline-none" placeholder="su.correo@empresa.com">
-                    </div>
-
-                    <div class="space-y-1">
-                        <label for="loginPassword" class="text-xs text-slate-400 font-bold uppercase">Contraseña</label>
-                        <input type="password" id="loginPassword" required class="w-full bg-mining-900 border border-mining-700 p-3 rounded text-white focus:border-mining-accent outline-none" placeholder="******">
-                    </div>
-
-                    <button type="submit" class="w-full bg-mining-accent hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-lg shadow-lg shadow-blue-500/20 transition-all active:scale-95 flex justify-center items-center gap-2 mt-6">
-                        <i class="fa-solid fa-right-to-bracket"></i> Iniciar Sesión
-                    </button>
-                </form>
-            </div>
+        <section id="viewLogin" class="hidden flex flex-col items-center justify-center min-h-[70vh]">
+            <h2 class="text-3xl font-bold text-red-500 text-center">MODO LOCAL ACTIVO</h2>
+            <p class="text-lg text-slate-400 mt-2">No se requiere inicio de sesión. Acceso directo a Carga.</p>
         </section>
 
         <section id="viewCarga" class="fade-in hidden">
@@ -163,8 +141,9 @@
                         </div>
 
                         <div class="space-y-1">
-                            <label class="text-xs text-slate-400 font-bold uppercase">Capa # (Basal, 1 a 6, Coronamiento)</label>
-                            <input type="text" id="muroCapa" class="w-full bg-mining-900 border border-mining-700 p-2.5 rounded text-white focus:border-mining-accent outline-none" placeholder="Ej: 1, 3, BASAL, CORONAMIENTO">
+                            <label class="text-xs text-slate-400 font-bold uppercase">Capa # (Basal, 1 a 6)</label>
+                            <input type="text" id="muroCapa" class="w-full bg-mining-900 border border-mining-700 p-2.5 rounded text-white focus:border-mining-accent outline-none" placeholder="Ej: 1, 3, BASAL, 6">
+                            <p class="text-xs text-slate-500 mt-1">**Nota:** La Capa 6 es el Coronamiento.</p>
                         </div>
 
                         <div class="bg-mining-900 p-4 rounded border border-mining-700">
@@ -190,33 +169,10 @@
                     </div>
 
                     <div id="fieldsCancha" class="hidden space-y-5">
+                        <p class="text-sm text-slate-500">Los campos de Cancha se ignorarán en modo de prueba local.</p>
                         <div class="space-y-1">
                             <label class="text-xs text-slate-400 font-bold uppercase">Zona (Ej: PC3)</label>
                             <input type="text" id="canchaZona" class="w-full bg-mining-900 border border-mining-700 p-2.5 rounded text-white focus:border-mining-accent outline-none" placeholder="Ej: PC3, PC4">
-                        </div>
-
-                        <div class="space-y-1">
-                            <label class="text-xs text-slate-400 font-bold uppercase">Pileta (Ej: A)</label>
-                            <input type="text" id="canchaPileta" class="w-full bg-mining-900 border border-mining-700 p-2.5 rounded text-white focus:border-mining-accent outline-none" placeholder="Ej: A, B">
-                        </div>
-
-                        <div class="space-y-1">
-                            <label class="text-xs text-slate-400 font-bold uppercase">Cancha # (Ej: 1)</label>
-                            <input type="text" id="canchaNumero" class="w-full bg-mining-900 border border-mining-700 p-2.5 rounded text-white focus:border-mining-accent outline-none" placeholder="Ej: 1, 2, 3">
-                            <p class="text-xs text-slate-500 mt-1">La combinación de los 3 campos debe coincidir con el mapa (Ej: PC3-A-1)</p>
-                        </div>
-
-                        <div class="space-y-1">
-                            <label class="text-xs text-slate-400 font-bold uppercase">Material</label>
-                            <div class="relative">
-                                <select id="canchaMaterial" class="w-full bg-mining-900 border border-mining-700 text-white p-2.5 rounded focus:border-mining-accent outline-none appearance-none">
-                                    <option value="FINO">FINO</option>
-                                    <option value="MASIVO">MASIVO</option>
-                                </select>
-                                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-400">
-                                    <i class="fa-solid fa-chevron-down text-xs"></i>
-                                </div>
-                            </div>
                         </div>
                     </div>
 
@@ -225,7 +181,7 @@
                     </button>
                     
                     <button type="button" onclick="mostrarModalLimpiarDB()" class="w-full text-xs text-slate-500 hover:text-red-400 mt-4 underline">
-                        Borrar todos los datos (Admin)
+                        Borrar todos los datos de prueba
                     </button>
                 </form>
             </div>
@@ -234,8 +190,8 @@
         <section id="viewVisualizacion" class="hidden fade-in">
             <header class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-6 border-b border-mining-700 pb-4">
                 <div>
-                    <h2 class="text-3xl font-light text-white">Visualización de Canchas</h2>
-                    <p class="text-sm text-slate-400 mt-1">Reporte de clasificación de material por zona/pileta.</p>
+                    <h2 class="text-3xl font-light text-white">Visualización de Reporte</h2>
+                    <p class="text-sm text-slate-400 mt-1">Listado de todos los registros de **Muros** cargados.</p>
                 </div>
                 <div class="text-right mt-3 sm:mt-0">
                     <span id="totalRegistros" class="text-2xl font-bold text-mining-accent">0</span>
@@ -244,12 +200,13 @@
             </header>
             
             <div id="zoneFilterContainer" class="mb-6 flex flex-wrap gap-2 p-3 bg-mining-800 rounded-lg border border-mining-700">
+                <p class="text-sm text-slate-500">Sin filtros activos en Modo Local.</p>
             </div>
 
-            <div id="dashboardContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-20">
+            <div id="dashboardContainer" class="grid grid-cols-1 gap-6 pb-20">
                 <div class="text-center py-20 text-slate-600 col-span-full">
                     <i class="fa-solid fa-layer-group text-6xl mb-4 opacity-20"></i>
-                    <p>No hay registros de canchas cargados aún.</p>
+                    <p>No hay registros de muros cargados aún.</p>
                 </div>
             </div>
         </section>
@@ -259,7 +216,7 @@
                 <h2 class="text-3xl font-light text-white flex items-center gap-2">
                     <i class="fa-solid fa-mountain text-mining-accent"></i> Perfil de Muros
                 </h2>
-                <p class="text-sm text-slate-400 mt-1">Visualización del avance capa por capa de los muros.</p>
+                <p class="text-sm text-slate-400 mt-1">Visualización del avance capa por capa de los muros. **Datos de prueba locales.**</p>
             </header>
             
             <div id="murosDashboard" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pb-20">
@@ -279,7 +236,8 @@
             </div>
             
         </section>
-        </main>
+
+    </main>
 
     <div id="toast" class="fixed bottom-5 right-5 bg-mining-800 border-l-4 border-mining-accent text-white px-6 py-4 rounded shadow-2xl transform translate-y-20 opacity-0 transition-all duration-300 z-50 flex items-center gap-3">
         <i class="fa-solid fa-circle-check text-mining-accent"></i>
@@ -307,22 +265,28 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         // =========================================================================
-        // === 1. CONFIGURACIÓN INICIAL DE SUPABASE (CLAVES INSERTADAS) ===
+        // === 1. CONFIGURACIÓN INICIAL DE MODO LOCAL Y BASE DE DATOS MOCK ===
         // =========================================================================
         
-        // CLAVES DE TU PROYECTO
-        const SUPABASE_URL = 'https://hzmljjxtzbhfrdhtebgn.supabase.co'; 
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh6bWxqanh0emJoZnJkaHRlYmduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQxMjYwNjUsImV4cCI6MjA3OTcwMjA2NX0.iz20qmfAEoJCnRKZmOFDovET-W3JfY9Dr8t-MnSUf_k'; 
-
-        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // BASE DE DATOS DE PRUEBA LOCAL (MOCK)
+        let mockDatabase = {
+            muros_registros: JSON.parse(localStorage.getItem('muros_registros_local')) || [],
+            canchas_registros: JSON.parse(localStorage.getItem('canchas_registros_local')) || []
+        };
         
-        let currentUser = null; 
+        function saveMockDb() {
+            localStorage.setItem('muros_registros_local', JSON.stringify(mockDatabase.muros_registros));
+            localStorage.setItem('canchas_registros_local', JSON.stringify(mockDatabase.canchas_registros));
+        }
+
+        // Simulación de usuario logeado en modo local
+        const currentUser = { id: 'local-user', user_metadata: { nombre_completo: 'Usuario Local' }, email: 'local@test.com' };
+        
         let currentZoneFilter = 'TODOS';
         
-        // Mapeo de nombres de capas a IDs de SVG
+        // Mapeo de nombres de capa (en la base de datos) a IDs de elemento SVG
         const CAPA_SVG_MAP = {
             'BASAL': 'capa-basal',
             '1': 'capa-1',
@@ -330,12 +294,15 @@
             '3': 'capa-3',
             '4': 'capa-4',
             '5': 'capa-5',
-            '6': 'capa-6',
-            'CORONAMIENTO': 'capa-coronamiento',
+            '6': 'capa-6', // Capa 6 es el Coronamiento
         };
+        
+        // La lista de capas válidas para el formulario (se ha quitado CORONAMIENTO)
+        const CAPAS_VALIDAS_FORM = ['BASAL', '1', '2', '3', '4', '5', '6'];
+
 
         // =========================================================================
-        // === 2. AUTENTICACIÓN Y MANEJO DE VISTAS ===
+        // === 2. MANEJO DE VISTAS (MODIFICADO PARA IGNORAR LOGIN) ===
         // =========================================================================
         
         function cambiarVista(vista) {
@@ -345,73 +312,30 @@
                 visualizacion: document.getElementById('viewVisualizacion'),
                 visualizacionMuros: document.getElementById('viewVisualizacionMuros')
             };
-            const nav = document.getElementById('mainNav');
-
+            
             Object.values(views).forEach(v => v.classList.replace('flex', 'hidden'));
             Object.values(views).forEach(v => v.classList.replace('block', 'hidden'));
-            nav.classList.add('hidden');
 
-            if (vista === 'login') {
-                views.login.classList.replace('hidden', 'flex');
-            } else {
-                nav.classList.remove('hidden');
-                views[vista].classList.replace('hidden', 'block');
-            }
+            views[vista].classList.replace('hidden', vista === 'login' ? 'flex' : 'block');
             
             if (vista === 'visualizacion') {
                 renderizarDatos();
             } else if (vista === 'visualizacionMuros') {
-                renderizarMuros(); // Nueva función para la sección de muros
+                renderizarMuros(); 
             }
         }
         
         document.addEventListener('DOMContentLoaded', initializeApp);
 
-        async function initializeApp() {
-            const { data: { user } } = await supabaseClient.auth.getUser();
-            currentUser = user; 
-            
-            if (!currentUser) {
-                cambiarVista('login'); 
-                cambiarPestana('carga'); 
-            } else {
-                const userMetadata = currentUser.user_metadata;
-                const userName = userMetadata.nombre_completo || currentUser.email; 
-
-                document.getElementById('userInfo').innerText = `| Sesión: ${userName}`;
-                cambiarVista('carga'); 
-            }
+        function initializeApp() {
+            document.getElementById('userInfo').innerText = `| Sesión: ${currentUser.user_metadata.nombre_completo}`;
+            cambiarVista('carga'); 
+            cambiarPestana('carga'); 
         }
         
-        async function handleLogin(e) {
-            e.preventDefault();
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
-
-            const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
-            
-            if (error) {
-                console.error("Login Error:", error);
-                showAlertModal(`Error al iniciar sesión: ${error.message}`);
-            } else {
-                currentUser = data.user;
-                document.getElementById('loginForm').reset();
-                initializeApp(); 
-            }
-        }
-
-        async function handleLogout() {
-            const { error } = await supabaseClient.auth.signOut();
-            
-            if (error) {
-                console.error("Logout Error:", error);
-                showAlertModal(`Error al cerrar sesión: ${error.message}`);
-            } else {
-                currentUser = null;
-                cambiarVista('login'); 
-            }
-        }
-
+        function handleLogin() { /* Ignorado */ }
+        function handleLogout() { showAlertModal("El 'Cerrar Sesión' está deshabilitado en Modo Local. Actualice la página para borrar datos de sesión."); }
+        
         function cambiarPestana(tab) {
             const views = ['carga', 'visualizacion', 'visualizacionMuros'];
             const buttons = {
@@ -431,54 +355,40 @@
         }
         
         // =========================================================================
-        // === 3. LÓGICA DE DATOS (SUPABASE CRUD Y AGREGACIÓN) ===
+        // === 3. LÓGICA DE DATOS (MOCK CRUD) ===
         // =========================================================================
         
-        /**
-         * Lee todos los datos de Supabase y los agrupa.
-         */
         async function obtenerDatos() {
-            if (!currentUser) return {};
+            await new Promise(resolve => setTimeout(resolve, 10)); 
 
-            const selectQuery = '*'; 
+            const murosRaw = mockDatabase.muros_registros;
+            const canchasRaw = mockDatabase.canchas_registros;
+            
+            let datosDB = { muros: {}, canchas: {}, registrosMuros: [] };
 
-            const { data: murosRaw, error: murosError } = await supabaseClient
-                .from('muros_registros')
-                .select(selectQuery)
-                .order('fecha', { ascending: false }); // Ordenar por fecha descendente para obtener el registro más reciente primero
-            
-            const { data: canchasRaw, error: canchasError } = await supabaseClient
-                .from('canchas_registros')
-                .select(selectQuery);
-            
-            if (murosError || canchasError) {
-                console.error("Error al obtener datos de Supabase:", murosError || canchasError);
-                return {}; 
-            }
-            
-            let datosDB = { muros: {}, canchas: {} };
-
-            // 1. Agrupar Muros por Clave Única (ZONA-MURO_ID) y por Capa
+            // 1. Procesar Muros (para el Perfil SVG)
             murosRaw.forEach(record => {
                 const zona = record.zona.trim().toUpperCase();
                 const muroId = record.muro_id.trim().toUpperCase();
                 const capa = record.capa.trim().toUpperCase();
-                const claveMuro = `${zona}-${muroId}`;
+                
+                // ClaveMuro usa el formato completo "ZONA - MURO_ID"
+                const claveMuro = `${zona} - ${muroId}`;
                 
                 if (!datosDB.muros[claveMuro]) {
                     datosDB.muros[claveMuro] = {
                         registros: [],
-                        capasEstado: {} // { '1': { estado: 'completa', fecha: '...' }, 'BASAL': {...} }
+                        capasEstado: {}
                     };
                 }
                 
-                // Almacenar el registro histórico
+                // Almacenar el registro histórico para la tarjeta de Perfil
                 datosDB.muros[claveMuro].registros.push({
                     id: record.id,
                     capa: capa,
                     estado: record.estado,
                     turno: record.turno, 
-                    nombreUsuario: record.nombre_usuario || 'DESCONOCIDO', 
+                    nombreUsuario: record.nombre_usuario || 'LOCAL', 
                     fecha: new Date(record.fecha)
                 });
                 
@@ -490,19 +400,17 @@
                     };
                 }
             });
-
-            // 2. Agrupar Canchas por Zona (Mismo que antes, sin cambios de lógica)
-            canchasRaw.forEach(record => {
-                const zona = record.zona.toUpperCase();
-                // ... (lógica de cancha no relevante para esta sección)
-            });
             
+            // 2. Registros Muros (para la sección de Reporte detallado)
+            datosDB.registrosMuros = murosRaw.map(record => ({
+                ...record,
+                fecha: new Date(record.fecha),
+                clave: `${record.zona}-${record.muro_id}-${record.capa}-${record.id}` // Clave única para el reporte
+            })).sort((a, b) => b.fecha.getTime() - a.fecha.getTime()); // Ordenar del más reciente al más antiguo
+
             return datosDB;
         }
 
-        /**
-         * Valida los campos del muro antes de guardar.
-         */
         function validarCamposMuro() {
             const zona = document.getElementById('muroZona').value.trim();
             const muroId = document.getElementById('muroId').value.trim();
@@ -510,14 +418,13 @@
             const esParcial = document.getElementById('checkParcial').checked;
             const esCompleta = document.getElementById('checkCompleta').checked;
             
-            const capasValidas = ['BASAL', '1', '2', '3', '4', '5', '6', 'CORONAMIENTO'];
             
             if (!zona || !muroId || !capa) {
                 showAlertModal("Debe completar los campos Zona, Muro y Capa.");
                 return false;
             }
-            if (!capasValidas.includes(capa)) {
-                showAlertModal(`Capa inválida. Use: ${capasValidas.join(', ')}.`);
+            if (!CAPAS_VALIDAS_FORM.includes(capa)) {
+                showAlertModal(`Capa inválida. Use: ${CAPAS_VALIDAS_FORM.join(', ')}.`);
                 return false;
             }
             if (!esParcial && !esCompleta) {
@@ -527,97 +434,90 @@
             return true;
         }
 
-
-        /**
-         * Guarda o actualiza datos en Supabase.
-         */
         async function guardarDatos(e) {
             e.preventDefault();
-            if (!currentUser) return showAlertModal("Error: Debe iniciar sesión para guardar datos.");
 
             const tipo = document.getElementById('selectTipo').value;
-            const recordIdToModify = document.getElementById('recordIdToModify').value;
             const turno = document.getElementById('selectTurno').value.trim().toUpperCase(); 
-
-            const userMetadata = currentUser.user_metadata;
-            const userName = userMetadata.nombre_completo || currentUser.email;
-            
-            let tabla = '';
-            let objetoRegistro = {};
-            let isUpdate = !!recordIdToModify; 
+            const userName = currentUser.user_metadata.nombre_completo;
             
             if (tipo === 'muro') {
                 if (!validarCamposMuro()) return; 
 
-                tabla = 'muros_registros';
                 const zona = document.getElementById('muroZona').value.trim().toUpperCase();
                 const muroId = document.getElementById('muroId').value.trim().toUpperCase();
                 const capa = document.getElementById('muroCapa').value.trim().toUpperCase(); 
                 const esParcial = document.getElementById('checkParcial').checked;
 
-                objetoRegistro = {
+                const objetoRegistro = {
+                    id: Date.now(),
                     zona: zona,
                     muro_id: muroId,
                     capa: capa,
                     estado: esParcial ? 'parcial' : 'completa',
                     turno: turno, 
                     user_id: currentUser.id,
-                    nombre_usuario: userName 
+                    nombre_usuario: userName,
+                    fecha: new Date().toISOString()
                 };
+                
+                mockDatabase.muros_registros.push(objetoRegistro);
 
             } else if (tipo === 'cancha') {
-                // ... (Lógica de cancha sin cambios, asumiendo validación simple)
-                tabla = 'canchas_registros';
-                const zona = document.getElementById('canchaZona').value.trim().toUpperCase();
-                const pileta = document.getElementById('canchaPileta').value.trim().toUpperCase();
-                const cancha = document.getElementById('canchaNumero').value.trim().toUpperCase(); 
-                const material = document.getElementById('canchaMaterial').value;
-                const claveUnion = `${zona}-${pileta}-${cancha}`;
-                
-                if (!zona || !pileta || !cancha) {
-                    return showAlertModal("Debe completar los campos Zona, Pileta y Cancha para el registro de Cancha.");
-                }
-
-                objetoRegistro = {
-                    zona: zona,
-                    pileta: pileta,
-                    numero: claveUnion, 
-                    material: material,
-                    turno: turno, 
-                    user_id: currentUser.id,
-                    nombre_usuario: userName 
-                };
+                // ... (Lógica de cancha omitida/simulada)
+                const objetoRegistro = { id: Date.now(), fecha: new Date().toISOString() };
+                mockDatabase.canchas_registros.push(objetoRegistro);
             } else {
                 return showAlertModal("Debe seleccionar un Tipo de Registro.");
             }
             
-            let error = null;
-            if (isUpdate) {
-                const result = await supabaseClient.from(tabla).update(objetoRegistro).eq('id', recordIdToModify);
-                error = result.error;
-            } else {
-                const result = await supabaseClient.from(tabla).insert([objetoRegistro]);
-                error = result.error;
-            }
+            saveMockDb();
 
-            if (error) {
-                console.error("Error al guardar/actualizar en Supabase:", error);
-                showAlertModal(`Error al guardar: ${error.message}`);
-                return;
-            }
-
-            mostrarToast(isUpdate ? "Registro modificado correctamente." : "Datos guardados correctamente", isUpdate ? 'yellow' : 'blue');
+            mostrarToast("Datos guardados (Mock)", 'blue');
             
             resetCargaForm();
             
-            // Re-renderizar ambas secciones después de guardar
-            if (document.getElementById('viewVisualizacion').classList.contains('block')) {
-                renderizarDatos(); 
-            } else if (document.getElementById('viewVisualizacionMuros').classList.contains('block')) {
+            // Re-renderizar la vista actual
+            const currentView = document.querySelector('section:not(.hidden)').id.replace('view', '');
+            if (currentView === 'visualizacion') {
+                renderizarDatos();
+            } else if (currentView === 'visualizacionMuros') {
                  renderizarMuros();
             }
         }
         
+        function mostrarModalLimpiarDB() {
+            showActionModal(
+                "Borrar Datos de Prueba Local",
+                "¿Está seguro de que desea **borrar todos los registros de muros** guardados localmente? Esta acción no se puede deshacer.",
+                () => {
+                    mockDatabase.muros_registros = [];
+                    mockDatabase.canchas_registros = [];
+                    saveMockDb();
+                    mostrarToast("Datos de prueba locales eliminados.", 'red');
+                    
+                    const currentView = document.querySelector('section:not(.hidden)').id.replace('view', '');
+                    if (currentView === 'visualizacion') {
+                        renderizarDatos();
+                    } else if (currentView === 'visualizacionMuros') {
+                         renderizarMuros();
+                    }
+                    document.getElementById('actionConfirmationModal').classList.replace('flex', 'hidden');
+                }
+            );
+        }
+        
+        function showActionModal(title, message, onConfirm) {
+            const modal = document.getElementById('actionConfirmationModal');
+            document.getElementById('actionModalTitle').innerText = title;
+            document.getElementById('actionModalMessage').innerHTML = message;
+            
+            const confirmBtn = document.getElementById('actionModalConfirmBtn');
+            confirmBtn.onclick = onConfirm; 
+            
+            modal.classList.replace('hidden', 'flex');
+        }
+
         function resetCargaForm() {
             document.getElementById('dataForm').reset();
             document.getElementById('recordIdToModify').value = "";
@@ -628,13 +528,10 @@
             document.getElementById('cargaTitle').innerText = 'Menú de Carga';
             document.getElementById('modificationHint').classList.add('hidden');
             
-            // Limpiar checks y asegurar que solo uno puede estar activo
             document.getElementById('checkParcial').checked = false;
             document.getElementById('checkCompleta').checked = false;
         }
         
-        // ... (Funciones de eliminar, handleChecks, toggleForm sin cambios significativos)
-
         function handleChecks(type) {
             if (type === 'parcial') {
                 document.getElementById('checkCompleta').checked = false;
@@ -656,24 +553,20 @@
                 form.classList.add('hidden');
             }
 
-            // Manejo de visibilidad de campos
             fieldsMuro.classList.add('hidden');
             fieldsCancha.classList.add('hidden');
             
-            // Remover 'required' de todos los inputs primero
             Array.from(fieldsMuro.querySelectorAll('input')).forEach(input => input.removeAttribute('required'));
             Array.from(fieldsCancha.querySelectorAll('input')).forEach(input => input.removeAttribute('required'));
 
             if (tipo === 'muro') {
                 fieldsMuro.classList.remove('hidden');
-                // Agregar 'required' a los campos del muro
                 document.getElementById('muroZona').setAttribute('required', '');
                 document.getElementById('muroId').setAttribute('required', '');
                 document.getElementById('muroCapa').setAttribute('required', '');
 
             } else if (tipo === 'cancha') {
                 fieldsCancha.classList.remove('hidden');
-                // Agregar 'required' a los campos de la cancha
                 document.getElementById('canchaZona').setAttribute('required', '');
                 document.getElementById('canchaPileta').setAttribute('required', '');
                 document.getElementById('canchaNumero').setAttribute('required', '');
@@ -684,8 +577,7 @@
             const toast = document.getElementById('toast');
             toast.querySelector('span').innerText = message;
             
-            // Actualizar color de borde y ícono según el tipo
-            let borderColor = '#3b82f6'; // Azul por defecto
+            let borderColor = '#3b82f6';
             let iconClass = 'fa-solid fa-circle-check';
             
             if (type === 'yellow') {
@@ -709,102 +601,139 @@
             }, 3000);
         }
         
+        function showAlertModal(message) {
+            document.getElementById('alertMessage').innerText = message;
+            document.getElementById('alertModal').classList.replace('hidden', 'flex');
+        }
+
+        function hideAlertModal() {
+            document.getElementById('alertModal').classList.replace('flex', 'hidden');
+        }
+
         // =========================================================================
-        // === 4. VISUALIZACIÓN DE PERFIL DE MUROS (SVG) ===
+        // === 4. VISUALIZACIÓN DE PERFIL DE MUROS (SVG CORREGIDO) ===
         // =========================================================================
         
-        /**
-         * Genera el código SVG de un perfil de muro (trapecio) con 7 capas.
-         */
         function generarSvgMuro(claveMuro) {
-            // Dimensiones base del trapecio (ajustadas para caber en una tarjeta)
+            // Constantes
+            const NUM_CAPAS = 7;
             const width = 200;
             const height = 240;
-            const topWidth = 80;
-            const capaHeight = height / 7; // Altura de cada una de las 7 capas
-
-            // Puntos para cada capa (desde abajo: Basal, 1, 2, 3, 4, 5, 6, Coronamiento)
-            const capasPuntos = [
-                // Basal (Capas 0 - 1)
-                `M 0 ${height} L ${width} ${height} L ${width - (width - topWidth) * 0/6} ${height - capaHeight} L ${ (width - topWidth) * 0/6} ${height - capaHeight} Z`,
-                
-                // Capa 1 (Capas 1 - 2)
-                `M ${ (width - topWidth) * 0/6} ${height - capaHeight} L ${width - (width - topWidth) * 0/6} ${height - capaHeight} L ${width - (width - topWidth) * 1/6} ${height - 2 * capaHeight} L ${ (width - topWidth) * 1/6} ${height - 2 * capaHeight} Z`,
-                
-                // Capa 2 (Capas 2 - 3)
-                `M ${ (width - topWidth) * 1/6} ${height - 2 * capaHeight} L ${width - (width - topWidth) * 1/6} ${height - 2 * capaHeight} L ${width - (width - topWidth) * 2/6} ${height - 3 * capaHeight} L ${ (width - topWidth) * 2/6} ${height - 3 * capaHeight} Z`,
-                
-                // Capa 3 (Capas 3 - 4)
-                `M ${ (width - topWidth) * 2/6} ${height - 3 * capaHeight} L ${width - (width - topWidth) * 2/6} ${height - 3 * capaHeight} L ${width - (width - topWidth) * 3/6} ${height - 4 * capaHeight} L ${ (width - topWidth) * 3/6} ${height - 4 * capaHeight} Z`,
-                
-                // Capa 4 (Capas 4 - 5)
-                `M ${ (width - topWidth) * 3/6} ${height - 4 * capaHeight} L ${width - (width - topWidth) * 3/6} ${height - 4 * capaHeight} L ${width - (width - topWidth) * 4/6} ${height - 5 * capaHeight} L ${ (width - topWidth) * 4/6} ${height - 5 * capaHeight} Z`,
-                
-                // Capa 5 (Capas 5 - 6)
-                `M ${ (width - topWidth) * 4/6} ${height - 5 * capaHeight} L ${width - (width - topWidth) * 4/6} ${height - 5 * capaHeight} L ${width - (width - topWidth) * 5/6} ${height - 6 * capaHeight} L ${ (width - topWidth) * 5/6} ${height - 6 * capaHeight} Z`,
-
-                // Capa 6 (Capas 6 - Coronamiento)
-                `M ${ (width - topWidth) * 5/6} ${height - 6 * capaHeight} L ${width - (width - topWidth) * 5/6} ${height - 6 * capaHeight} L ${width - (width - topWidth) * 6/6} ${height - 7 * capaHeight} L ${ (width - topWidth) * 6/6} ${height - 7 * capaHeight} Z`,
-            ];
+            const topWidth = 50; // Ancho del Coronamiento (Capa 6, estrecho)
+            const bottomWidth = 200; // Ancho de la Basal (ancho)
             
-            // Nombres de capas para IDs de SVG y etiquetas de texto
-            const nombresCapas = [
-                { id: 'capa-basal', label: 'Basal', index: 0 },
-                { id: 'capa-1', label: 'Capa 1', index: 1 },
-                { id: 'capa-2', label: 'Capa 2', index: 2 },
-                { id: 'capa-3', label: 'Capa 3', index: 3 },
-                { id: 'capa-4', label: 'Capa 4', index: 4 },
-                { id: 'capa-5', label: 'Capa 5', index: 5 },
-                { id: 'capa-6', label: 'Coronamiento', index: 6 }, // Usamos 'Coronamiento' en el label pero 'capa-6' en el ID para simplificar
+            // Ajustar la altura total para dejar espacio para el título y la línea divisoria
+            const titleHeight = 25; // Altura reservada para el título y la línea
+            const drawableHeight = height - titleHeight;
+            const capaHeight = drawableHeight / NUM_CAPAS;
+            
+            const capasPuntos = [];
+            
+            for (let i = 0; i < NUM_CAPAS; i++) {
+                // i = 0 (Coronamiento/Capa 6) ... i = 6 (Basal)
+                
+                // Alturas Y (comienzan después del título: titleHeight)
+                const y_top = titleHeight + i * capaHeight;
+                const y_bottom = titleHeight + (i + 1) * capaHeight;
+                
+                // Cálculo de ancho: El factor de ancho es proporcional a la distancia desde el tope (i)
+                const factor_top = i / NUM_CAPAS; 
+                const factor_bottom = (i + 1) / NUM_CAPAS;
+                
+                // Cálculo de ancho: Anchura linealmente interpolada entre topWidth y bottomWidth
+                const figura_ancho_top = topWidth + (bottomWidth - topWidth) * factor_top;
+                const figura_ancho_bottom = topWidth + (bottomWidth - topWidth) * factor_bottom;
+
+                // Lados X para la capa (centrados)
+                const x1_top = (width - figura_ancho_top) / 2;
+                const x2_top = x1_top + figura_ancho_top;
+                
+                const x1_bottom = (width - figura_ancho_bottom) / 2;
+                const x2_bottom = x1_bottom + figura_ancho_bottom;
+                
+                // Dibuja el polígono de la capa: 
+                // (x1_bottom, y_bottom) -> (x2_bottom, y_bottom) -> (x2_top, y_top) -> (x1_top, y_top) -> Cierre
+                capasPuntos.push(`M ${x1_bottom} ${y_bottom} L ${x2_bottom} ${y_bottom} L ${x2_top} ${y_top} L ${x1_top} ${y_top} Z`);
+            }
+
+            // Mapeo de nombres
+            const NOMBRES_CAPAS_SVG = [
+                { id: 'capa-6', label: '6', dbKey: '6' },         // i = 0 (Arriba, estrecho)
+                { id: 'capa-5', label: '5', dbKey: '5' },         // i = 1
+                { id: 'capa-4', label: '4', dbKey: '4' },         // i = 2
+                { id: 'capa-3', label: '3', dbKey: '3' },         // i = 3
+                { id: 'capa-2', label: '2', dbKey: '2' },         // i = 4
+                { id: 'capa-1', label: '1', dbKey: '1' },         // i = 5
+                { id: 'capa-basal', label: 'Basal', dbKey: 'BASAL' }, // i = 6 (Abajo, ancho)
             ];
 
-            // Generar el SVG
+            // Reemplazar espacios y guiones para crear un ID de elemento seguro para el DOM
+            const safeClaveMuro = claveMuro.replace(/\s/g, '_').replace(/-/g, '__');
+
+
             let svgContent = `<svg viewBox="0 0 ${width} ${height}" class="w-full" style="max-width: ${width}px; margin: 0 auto; display: block;">`;
             
-            nombresCapas.reverse().forEach((capa, i) => { // Dibujar de arriba (Coronamiento) hacia abajo (Basal)
-                const index = 6 - i; // Índice correcto para acceder a capasPuntos
+            // 1. Título del Muro (Parte superior izquierda)
+            svgContent += `
+                <text x="5" y="15" 
+                    text-anchor="start" 
+                    font-size="12" 
+                    font-weight="bold"
+                    fill="#e2e8f0" 
+                    class="pointer-events-none">
+                    ${claveMuro}
+                </text>
+            `;
+            
+            // 2. Línea divisoria (antes del gráfico de perfil)
+            svgContent += `
+                <rect x="0" y="${titleHeight - 5}" width="${width}" height="1" fill="#475569"/>
+            `;
+
+            // 3. Dibujar las Capas (i=0 es la de arriba)
+            NOMBRES_CAPAS_SVG.forEach((capaInfo, i) => {
                 svgContent += `
                     <path 
-                        id="${claveMuro}-${capa.id}" 
-                        d="${capasPuntos[index]}" 
+                        id="${safeClaveMuro}-${capaInfo.id.replace(/\s/g, '_')}" 
+                        d="${capasPuntos[i]}" 
                         class="svg-capa"
-                        data-capa="${capa.label}"
+                        data-capa-db="${capaInfo.dbKey}"
                     />
                 `;
             });
             
-            // Agregar etiquetas de texto al centro de cada capa (opcional pero útil)
-            nombresCapas.reverse().forEach((capa, i) => { 
-                const index = 6 - i;
-                const yCenter = height - (index + 0.5) * capaHeight; // Centro vertical de la capa
-                // Calculamos el centro horizontal (xCenter) en función de la altura actual para mantenerlo centrado en el trapecio
-                const factorX = (index + 0.5) / 7;
-                const xCenter = width / 2;
+            // 4. Añadir las Etiquetas de Capa (Centradas en la capa)
+            for (let i = 0; i < NUM_CAPAS; i++) {
+                const yCenter = titleHeight + (i + 0.5) * capaHeight; 
+                
+                // Cálculo de ancho en el centro
+                const factor_center = (i + 0.5) / NUM_CAPAS;
+                const figura_ancho_center = topWidth + (bottomWidth - topWidth) * factor_center;
+                const xCenter = (width - figura_ancho_center) / 2 + (figura_ancho_center / 2);
+
+                // Obtener etiqueta corregida
+                let label = NOMBRES_CAPAS_SVG[i].label;
                 
                 svgContent += `
-                    <text x="${xCenter}" y="${yCenter + 4}" 
+                    <text x="${xCenter}" y="${yCenter + 3}" 
                         text-anchor="middle" 
                         font-size="8" 
                         fill="#0f172a" 
                         class="pointer-events-none font-bold opacity-70">
-                        ${capa.label.replace('Capa ', '')}
+                        ${label}
                     </text>
                 `;
-            });
+            }
 
             svgContent += `</svg>`;
             return svgContent;
         }
 
-        /**
-         * Renderiza la vista completa de muros.
-         */
         async function renderizarMuros() {
             const datosDB = await obtenerDatos(); 
             const muros = datosDB.muros || {};
             const dashboard = document.getElementById('murosDashboard');
             
-            // 1. Limpiar y verificar si hay datos
             dashboard.innerHTML = '';
             const clavesMuros = Object.keys(muros).sort();
             
@@ -817,26 +746,20 @@
                 return;
             }
 
-            // 2. Iterar y renderizar cada perfil de muro
             clavesMuros.forEach(claveMuro => {
                 const dataMuro = muros[claveMuro];
-                const [zona, muroId] = claveMuro.split('-');
                 
-                // Generar el contenedor y el SVG del muro
                 let html = `
                     <div class="bg-mining-800 rounded-xl p-4 border border-mining-700 shadow-lg fade-in">
-                        <h3 class="text-lg font-bold text-white mb-2 truncate">${muroId}</h3>
-                        <p class="text-xs text-slate-400 mb-4 uppercase">Zona: ${zona}</p>
-                        
                         <div class="svg-container relative">
                             ${generarSvgMuro(claveMuro)}
                         </div>
                         
                         <div class="mt-4 border-t border-mining-700 pt-3">
                             <p class="text-xs text-slate-400 font-semibold mb-1">Últimos Registros:</p>
-                            ${dataMuro.registros.slice(0, 3).map(r => `
+                            ${dataMuro.registros.sort((a, b) => b.fecha.getTime() - a.fecha.getTime()).slice(0, 3).map(r => `
                                 <div class="flex justify-between text-xs text-slate-300">
-                                    <span>Capa ${r.capa}:</span>
+                                    <span>Capa ${r.capa} (${r.capa === '6' ? 'Coronamiento' : r.capa === 'BASAL' ? 'Basal' : 'Interm.'}):</span>
                                     <span class="${r.estado === 'parcial' ? 'text-yellow-400' : 'text-green-400'} font-bold uppercase">${r.estado} (${r.turno})</span>
                                 </div>
                             `).join('')}
@@ -845,72 +768,90 @@
                 `;
                 dashboard.innerHTML += html;
                 
-                // 3. Aplicar colores a las capas SVG
                 aplicarColorMuro(claveMuro, dataMuro.capasEstado);
             });
         }
 
-        /**
-         * Aplica los colores a las capas SVG según los estados registrados.
-         */
         function aplicarColorMuro(claveMuro, capasEstado) {
-            
-            // Normalizar las claves de capa para coincidir con los IDs de SVG
-            const estadoNormalizado = {};
-            Object.keys(capasEstado).forEach(capaKey => {
-                const svgId = CAPA_SVG_MAP[capaKey.toUpperCase()];
-                if (svgId) {
-                    estadoNormalizado[svgId] = capasEstado[capaKey].estado;
-                }
-            });
+            // CRUCIAL: Convertir la claveMuro (que tiene espacios) a un ID seguro para buscar en el DOM
+            const safeClaveMuro = claveMuro.replace(/\s/g, '_').replace(/-/g, '__');
 
-            // Iterar sobre todos los IDs de capa definidos
-            Object.values(CAPA_SVG_MAP).forEach(svgId => {
-                const elementId = `${claveMuro}-${svgId}`;
+            // Iterar sobre el mapeo de Capa DB Key -> SVG ID y pintar
+            Object.keys(CAPA_SVG_MAP).forEach(dbKey => {
+                const svgId = CAPA_SVG_MAP[dbKey];
+                
+                // Construir el ID completo del path SVG
+                const elementId = `${safeClaveMuro}-${svgId}`;
                 const capaElement = document.getElementById(elementId);
                 
                 if (capaElement) {
-                    // Resetear colores
                     capaElement.classList.remove('color-parcial', 'color-completa');
 
-                    // Aplicar color si hay un estado registrado
-                    const estado = estadoNormalizado[svgId];
+                    const estado = capasEstado[dbKey.toUpperCase()]?.estado;
                     if (estado === 'parcial') {
                         capaElement.classList.add('color-parcial');
                     } else if (estado === 'completa') {
                         capaElement.classList.add('color-completa');
                     }
-                    // Si no hay estado, mantendrá el color por defecto (gris definido en .svg-capa CSS)
                 }
             });
         }
         
         // =========================================================================
-        // === 5. FUNCIONES DE CANCHAS (SE QUEDAN SIN MAPA) ===
+        // === 5. FUNCIONES DE REPORTE DETALLADO (viewVisualizacion) ===
         // =========================================================================
         
-        // Nota: La sección de Canchas sigue funcionando para Carga/Reporte,
-        // pero la visualización del mapa (viewVisualizacion) solo mostrará
-        // las tarjetas de datos, ya que eliminamos la lógica de Leaflet/GeoJSON.
-
         async function renderizarDatos() {
-            // Esta función renderiza el reporte de Canchas (antes era "Visualización")
             const datosDB = await obtenerDatos(); 
-            const zonas = Object.keys(datosDB.canchas || {}); // Filtrar solo las zonas con canchas
+            const registros = datosDB.registrosMuros;
+            const dashboard = document.getElementById('dashboardContainer');
+            
+            dashboard.innerHTML = '';
+            document.getElementById('totalRegistros').innerText = registros.length;
 
-            // ... (Resto de la lógica de rendering de Canchas (dashboardContainer) va aquí, sin cambios)
-            // ... (Asegúrate de manejar el cálculo de totalRegistros correctamente)
-        }
+            if (registros.length === 0) {
+                dashboard.innerHTML = `
+                    <div class="text-center py-20 text-slate-600 col-span-full">
+                        <i class="fa-solid fa-file-lines text-6xl mb-4 opacity-20"></i>
+                        <p>No hay registros de muros cargados aún.</p>
+                    </div>`;
+                return;
+            }
 
-        function filtrarPorZona(zona, isClick = true, datosDB) {
-            // ... (Lógica de filtrado de canchas)
+            // Generar tarjetas de reporte
+            registros.forEach(r => {
+                const estadoColor = r.estado === 'parcial' ? 'text-mining-warning' : 'text-mining-success';
+                const estadoBg = r.estado === 'parcial' ? 'bg-yellow-400/10' : 'bg-green-400/10';
+                
+                const html = `
+                    <div class="bg-mining-800 rounded-xl p-4 border border-mining-700 shadow-lg fade-in">
+                        <div class="flex justify-between items-center border-b border-mining-700 pb-2 mb-2">
+                            <h3 class="text-lg font-bold text-white">${r.zona} - ${r.muro_id}</h3>
+                            <span class="text-xs font-semibold ${estadoColor} ${estadoBg} px-2 py-0.5 rounded-full uppercase">${r.estado}</span>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-y-1 text-sm">
+                            <span class="text-slate-400">Capa:</span>
+                            <span class="text-white font-bold">${r.capa}</span>
+                            
+                            <span class="text-slate-400">Turno:</span>
+                            <span class="text-white">${r.turno}</span>
+                            
+                            <span class="text-slate-400">Fecha/Hora:</span>
+                            <span class="text-white">${r.fecha.toLocaleString()}</span>
+                            
+                            <span class="text-slate-400">Registrado por:</span>
+                            <span class="text-white truncate">${r.nombre_usuario}</span>
+                        </div>
+                    </div>
+                `;
+                dashboard.innerHTML += html;
+            });
+            
+            // Ajustar el grid para que se vea bien
+            dashboard.classList.remove('grid-cols-1');
+            dashboard.classList.add('grid-cols-1', 'sm:grid-cols-2', 'lg:grid-cols-3');
         }
-
-        function renderizarFiltros(zonas) {
-            // ... (Lógica de renderizado de filtros de canchas)
-        }
-        
-        // ... (El resto de funciones auxiliares del final, como handleLogin, handleLogout, modals, etc., se mantienen sin cambios)
     </script>
 </body>
 </html>
