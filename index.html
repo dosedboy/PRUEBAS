@@ -215,7 +215,7 @@
                             </div>
                         </div>
                     </div>
-                    <button type="submit" class="w-full bg-mining-accent hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-lg shadow-lg shadow-blue-500/20 transition-all active:scale-95 flex justify-center items-center gap-2">
+                    <button type="submit" id="btnGuardar" class="w-full bg-mining-accent hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-lg shadow-lg shadow-blue-500/20 transition-all active:scale-95 flex justify-center items-center gap-2">
                         <i class="fa-regular fa-floppy-disk"></i> Guardar Registro
                     </button>
                     
@@ -514,11 +514,18 @@
             const form = document.getElementById('dataForm');
             const fieldsMuro = document.getElementById('fieldsMuro');
             const fieldsCancha = document.getElementById('fieldsCancha');
+            const btnGuardar = document.getElementById('btnGuardar'); // Obtener el botón por su nueva ID
             
             // 1. Mostrar el formulario principal (donde está el botón Guardar)
             form.classList.remove('hidden');
             form.classList.add('fade-in'); 
-            form.style.display = 'block'; // <<< Forzar la visibilidad (solución a problemas de CSS)
+            form.style.display = 'block'; 
+            
+            // 1b. FORZAR VISIBILIDAD DEL BOTÓN
+            if (btnGuardar) {
+                btnGuardar.classList.remove('hidden');
+                btnGuardar.style.display = 'flex'; // Coincide con la clase flex en HTML
+            }
 
             // 2. Ocultar todos los campos específicos primero
             fieldsMuro.classList.add('hidden');
@@ -547,7 +554,10 @@
             } else {
                 // Si no se selecciona nada, ocultar
                 form.classList.add('hidden');
-                form.style.display = 'none'; // <<< Ocultar también forzando display
+                form.style.display = 'none'; 
+                if (btnGuardar) {
+                     btnGuardar.style.display = 'none'; // Ocultar el botón también
+                }
             }
         }
         // =========================================================================
