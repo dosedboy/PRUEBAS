@@ -13,12 +13,12 @@
                 extend: {
                     colors: {
                         mining: {
-                            900: '#0f172a', // Fondo muy oscuro
-                            800: '#1e293b', // Paneles
-                            700: '#334155', // Bordes
-                            accent: '#3b82f6', // Azul primario
-                            warning: '#eab308', // Amarillo
-                            success: '#22c59e'  // Verde
+                            900: '#0f172a', 
+                            800: '#1e293b', 
+                            700: '#334155', 
+                            accent: '#3b82f6', 
+                            warning: '#eab308', 
+                            success: '#22c59e'  
                         }
                     }
                 }
@@ -35,13 +35,13 @@
         
         /* --- ESTILOS SVG MUROS --- */
         .svg-capa {
-            fill: #334155; /* slate-700 para sin datos */
-            stroke: #0f172a; /* Borde oscuro para separación */
+            fill: #334155; 
+            stroke: #0f172a; 
             stroke-width: 1;
-            transition: fill 0.3s ease-in-out; /* Transición para el pintado */
+            transition: fill 0.3s ease-in-out; 
         }
-        .color-parcial { fill: #eab308 !important; } /* Amarillo */
-        .color-completa { fill: #22c59e !important; } /* Verde */
+        .color-parcial { fill: #eab308 !important; } 
+        .color-completa { fill: #22c59e !important; } 
         
         /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 8px; }
@@ -215,7 +215,6 @@
                             </div>
                         </div>
                     </div>
-
                     <button type="submit" class="w-full bg-mining-accent hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-lg shadow-lg shadow-blue-500/20 transition-all active:scale-95 flex justify-center items-center gap-2">
                         <i class="fa-regular fa-floppy-disk"></i> Guardar Registro
                     </button>
@@ -224,11 +223,10 @@
                         Borrar todos los datos (Admin)
                     </button>
                 </form>
-            </div>
+                </div>
         </section>
 
         <section id="viewVisualizacion" class="hidden fade-in">
-            
             <header class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-6 border-b border-mining-700 pb-4">
                 <div>
                     <h2 class="text-3xl font-light text-white">Visualización de Obra</h2>
@@ -249,7 +247,6 @@
                     <p>No hay registros cargados aún.</p>
                 </div>
             </div>
-
         </section>
         
         <section id="viewVisualizacionMuros" class="hidden fade-in">
@@ -308,10 +305,9 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         // =========================================================================
-        // === 1. CONFIGURACIÓN INICIAL DE SUPABASE (CLAVES ACTUALIZADAS) ===
+        // === 1. CONFIGURACIÓN INICIAL DE SUPABASE ===
         // =========================================================================
         
-        // CLAVES DE TU PROYECTO (ACTUALIZADAS)
         const SUPABASE_URL = 'https://fwluaarthwuckqpqgava.supabase.co'; 
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ3bHVhYXJ0aHd1Y2txcHFnYXZhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQxODk4MjksImV4cCI6MjA3OTc2NTgyOX0.9OQ55OGWSccpcXPOzq9Xkaw06J_5BS_pdV9rtRYF9As'; 
 
@@ -319,21 +315,15 @@
         let currentUser = null; 
         let currentZoneFilter = 'TODOS';
         
-        // Mapeo de nombres de capa (en la base de datos) a IDs de elemento SVG
         const CAPA_SVG_MAP = {
-            'BASAL': 'capa-basal',
-            '1': 'capa-1',
-            '2': 'capa-2',
-            '3': 'capa-3',
-            '4': 'capa-4',
-            '5': 'capa-5',
-            '6': 'capa-6', 
+            'BASAL': 'capa-basal', '1': 'capa-1', '2': 'capa-2', '3': 'capa-3', 
+            '4': 'capa-4', '5': 'capa-5', '6': 'capa-6', 
         };
         const CAPAS_VALIDAS_FORM = ['BASAL', '1', '2', '3', '4', '5', '6'];
 
 
         // =========================================================================
-        // === 2. AUTENTICACIÓN Y MANEJO DE VISTAS (MODIFICADO PARA 3 VISTAS) ===
+        // === 2. AUTENTICACIÓN Y MANEJO DE VISTAS ===
         // =========================================================================
         
         function cambiarVista(vista) {
@@ -345,8 +335,10 @@
             };
             const nav = document.getElementById('mainNav');
 
-            Object.values(views).forEach(v => v.classList.replace('flex', 'hidden'));
-            Object.values(views).forEach(v => v.classList.replace('block', 'hidden'));
+            Object.values(views).forEach(v => {
+                v.classList.replace('flex', 'hidden');
+                v.classList.replace('block', 'hidden');
+            });
             nav.classList.add('hidden');
 
             if (vista === 'login') {
@@ -357,9 +349,9 @@
             }
             
             if (vista === 'visualizacion') {
-                renderizarDatos(); // Carga el reporte detallado por zonas
+                renderizarDatos(); 
             } else if (vista === 'visualizacionMuros') {
-                 renderizarMuros(); // Carga la vista de perfiles SVG
+                 renderizarMuros(); 
             }
         }
         
@@ -429,15 +421,9 @@
         }
         
         // =========================================================================
-        // === 3. LÓGICA DE DATOS (SUPABASE CRUD) - MODIFICADO PARA COMPATIBILIDAD ===
+        // === 3. LÓGICA DE DATOS (SUPABASE CRUD) ===
         // =========================================================================
-
-        /**
-         * Lee y procesa todos los datos de Supabase.
-         * Devuelve un objeto con dos estructuras:
-         * 1. 'reporteDetallado': Datos agrupados por Zona/Muro/Cancha (para viewVisualizacion)
-         * 2. 'perfilesMuros': Datos procesados para obtener el estado más reciente por Capa/Muro (para viewVisualizacionMuros)
-         */
+        
         async function obtenerDatos() {
             if (!currentUser) return { reporteDetallado: {}, perfilesMuros: {} };
 
@@ -452,10 +438,9 @@
                 return { reporteDetallado: {}, perfilesMuros: {} }; 
             }
             
-            let datosDB = {}; // Reporte Detallado
-            let perfilesMuros = {}; // Perfiles SVG
+            let datosDB = {}; 
+            let perfilesMuros = {}; 
 
-            // --- A. Procesar Muros y Agrupar (Reporte y Perfil) ---
             murosRaw.forEach(record => {
                 const zona = record.zona.toUpperCase();
                 const muroId = record.muro_id.toUpperCase();
@@ -463,25 +448,21 @@
                 const recordFecha = new Date(record.fecha);
                 const claveMuro = `${zona} - ${muroId}`;
                 
-                // 1. Reporte Detallado (estructura de Código 1)
+                // 1. Reporte Detallado
                 if (!datosDB[zona]) datosDB[zona] = { muros: {}, canchas: [] };
                 if (!datosDB[zona].muros) datosDB[zona].muros = {};
                 if (!datosDB[zona].muros[muroId]) datosDB[zona].muros[muroId] = [];
 
                 datosDB[zona].muros[muroId].push({
-                    id: record.id,
-                    capa: capa,
-                    estado: record.estado,
-                    turno: record.turno, 
-                    nombreUsuario: record.nombre_usuario || 'DESCONOCIDO', 
-                    fecha: recordFecha.toLocaleString()
+                    id: record.id, capa: capa, estado: record.estado, turno: record.turno, 
+                    nombreUsuario: record.nombre_usuario || 'DESCONOCIDO', fecha: recordFecha.toLocaleString()
                 });
                 
-                // 2. Perfiles Muros (estructura de Código 2 para SVG)
+                // 2. Perfiles Muros
                 if (!perfilesMuros[claveMuro]) {
                     perfilesMuros[claveMuro] = {
                         registros: [],
-                        capasEstado: {} // El más reciente para el color SVG
+                        capasEstado: {}
                     };
                 }
                 perfilesMuros[claveMuro].registros.push({
@@ -489,7 +470,6 @@
                     nombreUsuario: record.nombre_usuario || 'DESCONOCIDO', fecha: recordFecha
                 });
 
-                // Lógica de MANTENER ESTADO (solo guardamos el registro más reciente por capa)
                 if (!perfilesMuros[claveMuro].capasEstado[capa] || perfilesMuros[claveMuro].capasEstado[capa].fecha < recordFecha) {
                     perfilesMuros[claveMuro].capasEstado[capa] = {
                         estado: record.estado,
@@ -498,7 +478,6 @@
                 }
             });
 
-            // --- B. Procesar Canchas y Agrupar (Solo Reporte Detallado) ---
             canchasRaw.forEach(record => {
                 const zona = record.zona.toUpperCase();
 
@@ -506,11 +485,8 @@
                 if (!datosDB[zona].canchas) datosDB[zona].canchas = [];
 
                 datosDB[zona].canchas.push({
-                    id: record.id,
-                    pileta: record.pileta.toUpperCase(),
-                    numero: record.numero.toUpperCase(),
-                    material: record.material,
-                    turno: record.turno, 
+                    id: record.id, pileta: record.pileta.toUpperCase(), numero: record.numero.toUpperCase(),
+                    material: record.material, turno: record.turno, 
                     nombreUsuario: record.nombre_usuario || 'DESCONOCIDO',
                     fecha: new Date(record.fecha).toLocaleString()
                 });
@@ -518,8 +494,6 @@
             
             return { reporteDetallado: datosDB, perfilesMuros: perfilesMuros };
         }
-        
-        // --- CRUD y Auxiliares (mantienen la lógica del Código 1) ---
         
         function handleChecks(type) {
             const parcial = document.getElementById('checkParcial');
@@ -533,7 +507,7 @@
         }
         
         // =========================================================================
-        // === FUNCIÓN DE TOGGLE CORREGIDA PARA MOSTRAR EL BOTÓN GUARDAR ===
+        // === FUNCIÓN DE TOGGLE CORREGIDA (SEGURO DE VISIBILIDAD) ===
         // =========================================================================
         function toggleForm() {
             const tipo = document.getElementById('selectTipo').value;
@@ -544,6 +518,7 @@
             // 1. Mostrar el formulario principal (donde está el botón Guardar)
             form.classList.remove('hidden');
             form.classList.add('fade-in'); 
+            form.style.display = 'block'; // <<< Forzar la visibilidad (solución a problemas de CSS)
 
             // 2. Ocultar todos los campos específicos primero
             fieldsMuro.classList.add('hidden');
@@ -570,8 +545,9 @@
                 document.getElementById('canchaPileta').required = true;
                 document.getElementById('canchaNumero').required = true;
             } else {
-                // Si no se selecciona nada (o se resetea), ocultar el formulario
+                // Si no se selecciona nada, ocultar
                 form.classList.add('hidden');
+                form.style.display = 'none'; // <<< Ocultar también forzando display
             }
         }
         // =========================================================================
@@ -591,7 +567,7 @@
             const span = toast.querySelector('span');
 
             toast.classList.remove('border-mining-accent', 'border-yellow-500', 'border-red-500', 'bg-red-800', 'bg-mining-800');
-            icon.classList.remove('text-mining-accent', 'text-yellow-500', 'text-red-500');
+            icon.classList.remove('text-mining-accent', 'text-yellow-500', 'text-red-500', 'fa-circle-check', 'fa-pen-to-square', 'fa-trash-can');
 
             if (color === 'yellow') {
                 toast.classList.add('border-yellow-500', 'bg-mining-800');
@@ -599,7 +575,7 @@
             } else if (color === 'red') {
                 toast.classList.add('border-red-500', 'bg-red-800');
                 icon.classList.add('fa-solid', 'fa-trash-can', 'text-red-500');
-            } else { // blue (default)
+            } else { 
                 toast.classList.add('border-mining-accent', 'bg-mining-800');
                 icon.classList.add('fa-solid', 'fa-circle-check', 'text-mining-accent');
             }
@@ -750,10 +726,10 @@
             document.getElementById('recordIdToModify').value = "";
             document.getElementById('selectTipo').value = "";
             document.getElementById('dataForm').classList.add('hidden');
+            document.getElementById('dataForm').style.display = 'none'; // Ocultar después de guardar
             document.getElementById('cargaTitle').innerText = 'Menú de Carga';
             document.getElementById('modificationHint').classList.add('hidden');
             
-            // Re-renderizar la vista actual
             const currentTabElement = document.querySelector('.flex.bg-mining-900 button.bg-mining-accent');
             if (currentTabElement) {
                 const currentTab = currentTabElement.id.replace('btn', '').toLowerCase();
@@ -762,7 +738,7 @@
                 } else if (currentTab === 'verMuros') {
                     cambiarPestana('visualizacionMuros');
                 } else {
-                    // Si estamos en Carga, nos quedamos en Carga
+                    
                 }
             }
         }
@@ -783,7 +759,7 @@
                     const currentTab = currentTabElement.id.replace('btn', '').toLowerCase();
                     cambiarPestana(currentTab === 'ver' ? 'visualizacion' : currentTab === 'verMuros' ? 'visualizacionMuros' : 'carga');
                 } else {
-                    cambiarPestana('visualizacion'); // Fallback
+                    cambiarPestana('visualizacion'); 
                 }
                 mostrarToast("Registro de muro eliminado correctamente.", 'red');
             }
@@ -805,7 +781,6 @@
             }
         }
 
-        // Función para comparación alfanumérica de muros (Ej: M1, M2, M10)
         function compareAlphanumeric(a, b) {
             return a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' });
         }
@@ -818,7 +793,6 @@
                 murosKeys.forEach(muroId => {
                     const registrosMuro = dataZona.muros[muroId].sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime());
 
-                    // Agrupamos por capa para ver el último estado de cada una
                     const ultimosPorCapa = {};
                     registrosMuro.forEach(r => {
                         if (!ultimosPorCapa[r.capa]) {
@@ -964,12 +938,11 @@
                 showAlertModal("Registro no encontrado para edición.");
             }
         }
-        
+
         function renderizarFiltros(zonas) {
             const container = document.getElementById('zoneFilterContainer');
             container.innerHTML = generarBotonFiltro('TODOS') + zonas.map(z => generarBotonFiltro(z)).join('');
             
-            // Asegurar que el botón activo esté seleccionado
             const activeButton = document.getElementById(`btnFilter-${currentZoneFilter}`);
             if (activeButton) {
                 activeButton.classList.add('bg-mining-accent', 'text-white');
@@ -1045,7 +1018,7 @@
         }
         
         // =========================================================================
-        // === 5. LÓGICA DE RENDERIZADO (VIEW VISUALIZACION MUROS - CÓDIGO 2) ===
+        // === 5. LÓGICA DE RENDERIZADO (VIEW VISUALIZACION MUROS) ===
         // =========================================================================
         
         function generarSvgMuro(claveMuro) {
@@ -1077,7 +1050,7 @@
                 const x1_bottom = (width - figura_ancho_bottom) / 2;
                 const x2_bottom = x1_bottom + figura_ancho_bottom;
                 
-                capasPuntos.push(`M ${x1_bottom} ${y_bottom} L ${x2_bottom} ${y_bottom} L ${x2_top} ${y_top} L ${x1_top} ${y1_top} Z`);
+                capasPuntos.push(`M ${x1_bottom} ${y_bottom} L ${x2_bottom} ${y_bottom} L ${x2_top} ${y_top} L ${x1_top} ${y_top} Z`);
             }
 
             const NOMBRES_CAPAS_SVG = [
@@ -1212,7 +1185,6 @@
             });
         }
 
-        // --- FUNCIONES DE RENDERIZADO GENERAL (al final) ---
         async function renderizarDatos() {
             const { reporteDetallado: datosDB } = await obtenerDatos();
             const zonas = Object.keys(datosDB).sort();
