@@ -201,7 +201,7 @@
                                 </select>
                                 <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-400">
                                     <i class="fa-solid fa-chevron-down text-xs"></i>
-                                </div>
+                                </div
                             </div>
                         </div>
                     </div>
@@ -273,14 +273,14 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         // =========================================================================
-        // === 1. CONFIGURACIÓN INICIAL DE SUPABASE (CLAVES INSERTADAS) ===
+        // === 1. CONFIGURACIÓN INICIAL DE SUPABASE (CLAVES ACTUALIZADAS) ===
         // =========================================================================
         
-        // CLAVES DE TU PROYECTO
-        const SUPABASE_URL = 'https://hzmljjxtzbhfrdhtebgn.supabase.co'; 
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh6bWxqanh0emJoZnJkaHRlYmduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQxMjYwNjUsImV4cCI6MjA3OTcwMjA2NX0.iz20qmfAEoJCnRKZmOFDovET-W3JfY9Dr8t-MnSUf_k'; 
+        // CLAVES DE TU PROYECTO (ACTUALIZADAS)
+        const SUPABASE_URL = 'https://fwluaarthwuckqpqgava.supabase.co'; 
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ3bHVhYXJ0aHd1Y2txcHFnYXZhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQxODk4MjksImV4cCI6MjA3OTc2NTgyOX0.9OQ55OGWSccpcXPOzq9Xkaw06J_5BS_pdV9rtRYF9As'; 
 
-        // CORRECCIÓN CLAVE: Usamos 'supabaseClient' para evitar conflicto y el error de carga.
+        // Inicialización del cliente de Supabase
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         
         // Variable global para el estado de autenticación (contiene el objeto user de Supabase)
@@ -328,9 +328,8 @@
                 cambiarVista('login'); 
                 cambiarPestana('carga'); 
             } else {
-                // MODIFICACIÓN CLAVE: Leer el nombre de los metadatos de usuario
+                // Leer el nombre del usuario de los metadatos
                 const userMetadata = currentUser.user_metadata;
-                // Usamos 'nombre_completo' de los metadatos o el email si no se ha asignado nombre
                 const userName = userMetadata.nombre_completo || currentUser.email; 
 
                 document.getElementById('userInfo').innerText = `| Sesión: ${userName}`;
@@ -396,21 +395,21 @@
         async function obtenerDatos() {
             if (!currentUser) return {};
 
-            const selectQuery = 'id, fecha, zona, muro_id, capa, estado, turno, nombre_usuario'; 
+            const selectQueryMuros = 'id, fecha, zona, muro_id, capa, estado, turno, nombre_usuario'; 
+            const selectQueryCanchas = 'id, fecha, zona, pileta, numero, material, turno, nombre_usuario'; 
             
             // 1. CONSULTA MUROS (Tabla: muros_registros)
             const { data: murosRaw, error: murosError } = await supabaseClient
                 .from('muros_registros')
-                .select(selectQuery);
+                .select(selectQueryMuros);
             
             // 2. CONSULTA CANCHAS (Tabla: canchas_registros)
             const { data: canchasRaw, error: canchasError } = await supabaseClient
                 .from('canchas_registros')
-                .select('id, fecha, zona, pileta, numero, material, turno, nombre_usuario');
+                .select(selectQueryCanchas);
             
             if (murosError || canchasError) {
                 console.error("Error al obtener datos de Supabase:", murosError || canchasError);
-                // Retornar objeto vacío si hay error en la conexión/lectura
                 return {}; 
             }
             
@@ -456,7 +455,7 @@
             return datosDB;
         }
         
-        // --- Validación Canchas (NUEVA FUNCIÓN) ---
+        // --- Validación Canchas ---
         function validarCamposCancha() {
             const zona = document.getElementById('canchaZona').value.trim();
             const pileta = document.getElementById('canchaPileta').value.trim();
@@ -512,10 +511,10 @@
                     nombre_usuario: userName 
                 };
 
-            } else if (tipo === 'cancha') { // tipo === 'cancha'
+            } else if (tipo === 'cancha') { 
                 tabla = 'canchas_registros';
                 
-                // --- VALIDACIÓN CANCHA (NUEVA) ---
+                // --- VALIDACIÓN CANCHA ---
                 if (!validarCamposCancha()) return;
 
                 const zona = document.getElementById('canchaZona').value.trim().toUpperCase();
@@ -571,21 +570,21 @@
             renderizarDatos(); 
         }
         
-        // --- Función de Limpieza de DB (MODIFICADA) ---
+        // --- Función de Limpieza de DB ---
         async function limpiarDB() {
             if (!currentUser) return showAlertModal("Error: Debe iniciar sesión para realizar esta acción.");
             
-            // USANDO supabaseClient
+            // USANDO supabaseClient - Borra muros
             const { error: murosError } = await supabaseClient
                 .from('muros_registros')
                 .delete()
-                .neq('id', '00000000-0000-0000-0000-000000000000'); // Borra todo
+                .neq('id', '00000000-0000-0000-0000-000000000000'); 
                 
-            // USANDO supabaseClient
+            // USANDO supabaseClient - Borra canchas
             const { error: canchasError } = await supabaseClient
                 .from('canchas_registros')
                 .delete()
-                .neq('id', '00000000-0000-0000-0000-000000000000'); // Borra todo
+                .neq('id', '00000000-0000-0000-0000-000000000000'); 
             
             if (murosError || canchasError) {
                 console.error("Error al limpiar DB:", murosError || canchasError);
@@ -597,7 +596,7 @@
             mostrarToast("Todos los datos han sido eliminados.", 'red');
         }
 
-        // --- Función de Eliminación de Muro (USANDO supabaseClient) ---
+        // --- Función de Eliminación de Muro ---
         async function eliminarRegistroMuro(zona, muroId, recordId, shouldRerender = true) {
             if (!currentUser) return showAlertModal("Error: Debe iniciar sesión para eliminar datos.");
             
@@ -618,7 +617,7 @@
             }
         }
         
-        // --- Función de Eliminación de Cancha (USANDO supabaseClient) ---
+        // --- Función de Eliminación de Cancha ---
         async function eliminarRegistroCancha(zona, recordId, shouldRerender = true) {
             if (!currentUser) return showAlertModal("Error: Debe iniciar sesión para eliminar datos.");
 
@@ -639,7 +638,7 @@
             }
         }
         
-        // --- Funciones auxiliares (se mantienen) ---
+        // --- Funciones de Renderizado y Auxiliares ---
 
         function compareAlphanumeric(a, b) {
             const regex = /(\d+)|(\D+)/g;
@@ -697,7 +696,6 @@
                             ? 'text-mining-success bg-green-900/10 border-green-800' 
                             : 'text-mining-warning bg-yellow-900/10 border-yellow-800';
                         
-                        // RENDERIZANDO EL NOMBRE DE USUARIO
                         const userDisplay = capa.nombreUsuario || 'SIN REGISTRO';
                         
                         html += `
@@ -744,7 +742,6 @@
                         ? 'bg-blue-900/20 text-blue-300 border-blue-800'
                         : 'bg-orange-900/20 text-orange-300 border-orange-800';
                         
-                    // RENDERIZANDO EL NOMBRE DE USUARIO
                     const userDisplay = cancha.nombreUsuario || 'SIN REGISTRO';
 
                     html += `
@@ -783,9 +780,6 @@
             html += `</div></div>`; 
             return html;
         }
-
-
-        // --- Funciones auxiliares (se mantienen) ---
 
         function showAlertModal(message) {
             document.getElementById('alertMessage').innerText = message;
@@ -871,7 +865,7 @@
                 document.getElementById('canchaPileta').removeAttribute('required');
                 document.getElementById('canchaNumero').removeAttribute('required');
 
-            } else if (tipo === 'cancha') { // *** MODIFICADO PARA REQUERIR CANCHA ***
+            } else if (tipo === 'cancha') { 
                 fieldsMuro.classList.add('hidden');
                 fieldsCancha.classList.remove('hidden');
                 document.getElementById('muroZona').removeAttribute('required');
@@ -907,7 +901,6 @@
                 const dataZona = datosDB[zona];
                 if(dataZona.canchas) totalCount += dataZona.canchas.length;
                 if(dataZona.muros) {
-                    // Contar la cantidad de registros (no de muros)
                     Object.values(dataZona.muros).forEach(arr => totalCount += arr.length);
                 }
             });
