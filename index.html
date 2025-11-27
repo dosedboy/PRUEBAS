@@ -521,12 +521,122 @@
         
         // --- CRUD y Auxiliares (mantienen la lógica del Código 1) ---
         
-        // [Las funciones handleChecks, toggleForm, showAlertModal, hideAlertModal, 
-        // mostrarActionModal, mostrarModalLimpiarDB, guardarDatos, validarCamposCancha, 
-        // eliminarRegistroMuro, eliminarRegistroCancha, mostrarModalEdicion, 
-        // mostrarModalEdicionCancha se mantienen igual que en el Código 1]
+        function handleChecks(type) {
+            const parcial = document.getElementById('checkParcial');
+            const completa = document.getElementById('checkCompleta');
+            
+            if (type === 'parcial' && parcial.checked) {
+                completa.checked = false;
+            } else if (type === 'completa' && completa.checked) {
+                parcial.checked = false;
+            }
+        }
         
-        // ... (código completo de las funciones de CRUD, Modales y Toast del Código 1, que no se repite aquí para brevedad) ...
+        function toggleForm() {
+            const tipo = document.getElementById('selectTipo').value;
+            const form = document.getElementById('dataForm');
+            const fieldsMuro = document.getElementById('fieldsMuro');
+            const fieldsCancha = document.getElementById('fieldsCancha');
+            
+            form.classList.remove('hidden', 'fade-in');
+            fieldsMuro.classList.add('hidden');
+            fieldsCancha.classList.add('hidden');
+            
+            if (tipo === 'muro') {
+                fieldsMuro.classList.remove('hidden');
+                document.getElementById('muroZona').required = true;
+                document.getElementById('muroId').required = true;
+                document.getElementById('muroCapa').required = true;
+                document.getElementById('canchaZona').required = false;
+                document.getElementById('canchaPileta').required = false;
+                document.getElementById('canchaNumero').required = false;
+            } else if (tipo === 'cancha') {
+                fieldsCancha.classList.remove('hidden');
+                document.getElementById('muroZona').required = false;
+                document.getElementById('muroId').required = false;
+                document.getElementById('muroCapa').required = false;
+                document.getElementById('canchaZona').required = true;
+                document.getElementById('canchaPileta').required = true;
+                document.getElementById('canchaNumero').required = true;
+            } else {
+                form.classList.add('hidden');
+            }
+        }
+
+        function showAlertModal(message) {
+            document.getElementById('alertMessage').innerText = message;
+            document.getElementById('alertModal').classList.replace('hidden', 'flex');
+        }
+
+        function hideAlertModal() {
+            document.getElementById('alertModal').classList.replace('flex', 'hidden');
+        }
+
+        function mostrarToast(message, color = 'blue') {
+            const toast = document.getElementById('toast');
+            const icon = toast.querySelector('i');
+            const span = toast.querySelector('span');
+
+            toast.classList.remove('border-mining-accent', 'border-yellow-500', 'border-red-500', 'bg-red-800', 'bg-mining-800');
+            icon.classList.remove('text-mining-accent', 'text-yellow-500', 'text-red-500');
+
+            if (color === 'yellow') {
+                toast.classList.add('border-yellow-500', 'bg-mining-800');
+                icon.classList.add('fa-solid', 'fa-pen-to-square', 'text-yellow-500');
+            } else if (color === 'red') {
+                toast.classList.add('border-red-500', 'bg-red-800');
+                icon.classList.add('fa-solid', 'fa-trash-can', 'text-red-500');
+            } else { // blue (default)
+                toast.classList.add('border-mining-accent', 'bg-mining-800');
+                icon.classList.add('fa-solid', 'fa-circle-check', 'text-mining-accent');
+            }
+
+            span.innerText = message;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        function mostrarActionModal(title, message, confirmAction, actionData) {
+            document.getElementById('actionModalTitle').innerText = title;
+            document.getElementById('actionModalMessage').innerText = message;
+            const confirmBtn = document.getElementById('actionModalConfirmBtn');
+            
+            confirmBtn.onclick = () => {
+                confirmAction(actionData);
+                document.getElementById('actionConfirmationModal').classList.replace('flex', 'hidden');
+            };
+            
+            document.getElementById('actionConfirmationModal').classList.replace('hidden', 'flex');
+        }
+        
+        function mostrarModalLimpiarDB() {
+            mostrarActionModal(
+                "¡PELIGRO! Borrar Base de Datos",
+                "Estás a punto de ELIMINAR TODOS los registros de MUROS y CANCHAS de la base de datos. Esta acción es irreversible y solo debe ser realizada por un Administrador.",
+                limpiarBaseDeDatos,
+                null
+            );
+        }
+
+        async function limpiarBaseDeDatos() {
+            if (!currentUser) return showAlertModal("Error: Debe iniciar sesión.");
+
+            const { error: murosError } = await supabaseClient.from('muros_registros').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+            const { error: canchasError } = await supabaseClient.from('canchas_registros').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+            
+            if (murosError || canchasError) {
+                console.error("Error al limpiar DB:", murosError || canchasError);
+                return showAlertModal(`Error al limpiar la base de datos: ${murosError?.message || canchasError?.message}`);
+            }
+
+            mostrarToast("Base de datos limpiada correctamente (MUROS y CANCHAS).", 'red');
+            cambiarPestana('visualizacion'); 
+        }
 
         function validarCamposCancha() {
             const zona = document.getElementById('canchaZona').value.trim();
@@ -631,8 +741,17 @@
             document.getElementById('modificationHint').classList.add('hidden');
             
             // Re-renderizar la vista actual
-            const currentTab = document.querySelector('.flex.bg-mining-900 button.bg-mining-accent').id.replace('btn', '').toLowerCase();
-            cambiarPestana(currentTab === 'ver' ? 'visualizacion' : currentTab === 'verMuros' ? 'visualizacionMuros' : 'carga');
+            const currentTabElement = document.querySelector('.flex.bg-mining-900 button.bg-mining-accent');
+            if (currentTabElement) {
+                const currentTab = currentTabElement.id.replace('btn', '').toLowerCase();
+                if (currentTab === 'ver') {
+                    cambiarPestana('visualizacion');
+                } else if (currentTab === 'verMuros') {
+                    cambiarPestana('visualizacionMuros');
+                } else {
+                    // Si estamos en Carga, nos quedamos en Carga
+                }
+            }
         }
         
         async function eliminarRegistroMuro(zona, muroId, recordId, shouldRerender = true) {
@@ -646,53 +765,271 @@
             }
 
             if (shouldRerender) {
-                const currentTab = document.querySelector('.flex.bg-mining-900 button.bg-mining-accent').id.replace('btn', '').toLowerCase();
-                cambiarPestana(currentTab === 'ver' ? 'visualizacion' : currentTab === 'verMuros' ? 'visualizacionMuros' : 'carga');
+                const currentTabElement = document.querySelector('.flex.bg-mining-900 button.bg-mining-accent');
+                if (currentTabElement) {
+                    const currentTab = currentTabElement.id.replace('btn', '').toLowerCase();
+                    cambiarPestana(currentTab === 'ver' ? 'visualizacion' : currentTab === 'verMuros' ? 'visualizacionMuros' : 'carga');
+                } else {
+                    cambiarPestana('visualizacion'); // Fallback
+                }
                 mostrarToast("Registro de muro eliminado correctamente.", 'red');
             }
         }
         
-        // ... (resto de funciones de Código 1: compareAlphanumeric, generarTarjetaZona, mostrarModalEliminarMuro, etc.) ...
-        
-        // =========================================================================
-        // === 4. LÓGICA DE RENDERIZADO (VIEW VISUALIZACION - CÓDIGO 1) ===
-        // =========================================================================
+        async function eliminarRegistroCancha(zona, recordId, shouldRerender = true) {
+            if (!currentUser) return showAlertModal("Error: Debe iniciar sesión para eliminar datos.");
 
-        async function renderizarDatos() {
-            const { reporteDetallado: datosDB } = await obtenerDatos(); 
-            const zonas = Object.keys(datosDB).sort();
-            let totalCount = 0;
+            const { error } = await supabaseClient.from('canchas_registros').delete().eq('id', recordId); 
 
-            zonas.forEach(zona => {
-                const dataZona = datosDB[zona];
-                if(dataZona.canchas) totalCount += dataZona.canchas.length;
-                if(dataZona.muros) {
-                    Object.values(dataZona.muros).forEach(arr => totalCount += arr.length);
+            if (error) {
+                console.error("Error al eliminar cancha:", error);
+                return showAlertModal(`Error al eliminar cancha: ${error.message}`);
+            }
+            
+            if (shouldRerender) {
+                cambiarPestana('visualizacion');
+                mostrarToast("Registro de cancha eliminado correctamente.", 'red');
+            }
+        }
+
+        // Función para comparación alfanumérica de muros (Ej: M1, M2, M10)
+        function compareAlphanumeric(a, b) {
+            return a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' });
+        }
+
+        function generarTarjetaZona(zona, dataZona, reportType) {
+            let content = '';
+            
+            if (reportType === 'muro') {
+                const murosKeys = Object.keys(dataZona.muros).sort(compareAlphanumeric);
+                murosKeys.forEach(muroId => {
+                    const registrosMuro = dataZona.muros[muroId].sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime());
+
+                    // Agrupamos por capa para ver el último estado de cada una
+                    const ultimosPorCapa = {};
+                    registrosMuro.forEach(r => {
+                        if (!ultimosPorCapa[r.capa]) {
+                            ultimosPorCapa[r.capa] = r;
+                        }
+                    });
+
+                    const capasOrdenadas = Object.keys(ultimosPorCapa).sort(compareAlphanumeric);
+                    
+                    content += `
+                        <div class="bg-mining-900 p-4 rounded-lg border border-mining-700 shadow-md">
+                            <h4 class="text-lg font-bold text-white mb-2 border-b border-mining-700 pb-2 flex justify-between items-center">
+                                Muro: ${muroId} 
+                                <span class="text-xs text-slate-500 font-normal">(${registrosMuro.length} registros)</span>
+                            </h4>
+                            <div class="space-y-2">
+                                ${capasOrdenadas.map(capa => {
+                                    const r = ultimosPorCapa[capa];
+                                    return `
+                                        <div class="flex flex-col p-2 bg-mining-800 rounded border border-mining-700">
+                                            <div class="flex justify-between items-center">
+                                                <span class="font-semibold ${r.estado === 'completa' ? 'text-mining-success' : 'text-mining-warning'}">CAPA ${r.capa.toUpperCase()} (${r.estado.toUpperCase()})</span>
+                                                <button onclick="mostrarModalEdicion('muro', '${zona}', '${muroId}', '${r.id}')" class="text-slate-500 hover:text-mining-accent transition-colors text-sm"><i class="fa-solid fa-pen-to-square"></i></button>
+                                            </div>
+                                            <p class="text-xs text-slate-400 mt-1">Reg. ID: ${r.id.substring(0, 8)}... | Turno: ${r.turno} | Por: ${r.nombreUsuario}</p>
+                                            <p class="text-xs text-slate-500">Fecha: ${r.fecha}</p>
+                                            <button onclick="mostrarModalEliminarMuro('${zona}', '${muroId}', '${r.id}')" class="text-red-400 hover:text-red-600 transition-colors text-xs mt-2 self-end"><i class="fa-solid fa-trash-can mr-1"></i> Eliminar</button>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        </div>
+                    `;
+                });
+            } else if (reportType === 'cancha') {
+                const canchasOrdenadas = dataZona.canchas.sort((a, b) => compareAlphanumeric(a.numero, b.numero));
+                canchasOrdenadas.forEach(r => {
+                    content += `
+                        <div class="bg-mining-900 p-4 rounded-lg border border-mining-700 shadow-md">
+                            <h4 class="text-lg font-bold text-white mb-2 border-b border-mining-700 pb-2 flex justify-between items-center">
+                                Cancha: ${r.numero} - Pileta: ${r.pileta}
+                                <span class="text-xs text-slate-500 font-normal uppercase">(${r.material})</span>
+                            </h4>
+                            <div class="space-y-1 text-sm text-slate-300">
+                                <p>Turno: <span class="font-semibold">${r.turno}</span></p>
+                                <p>Por: <span class="font-semibold">${r.nombreUsuario}</span></p>
+                                <p class="text-xs text-slate-500">Fecha: ${r.fecha}</p>
+                            </div>
+                            <div class="flex justify-end gap-3 mt-3">
+                                <button onclick="mostrarModalEdicionCancha('${zona}', '${r.id}')" class="text-slate-500 hover:text-mining-accent transition-colors text-sm"><i class="fa-solid fa-pen-to-square mr-1"></i> Editar</button>
+                                <button onclick="mostrarModalEliminarCancha('${zona}', '${r.id}')" class="text-red-400 hover:text-red-600 transition-colors text-sm"><i class="fa-solid fa-trash-can mr-1"></i> Eliminar</button>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
+            if (!content) {
+                return `<p class="text-slate-500 p-4">No hay registros de ${reportType} para esta zona.</p>`;
+            }
+
+            return `
+                <div class="space-y-4">
+                    <h3 class="text-xl font-bold text-mining-accent mt-4 uppercase flex items-center gap-2">
+                        <i class="fa-solid ${reportType === 'muro' ? 'fa-mountain' : 'fa-dumpster'}"></i> 
+                        Registros de ${reportType === 'muro' ? 'Muros' : 'Canchas'}
+                    </h3>
+                    ${content}
+                </div>
+            `;
+        }
+
+        function mostrarModalEliminarMuro(zona, muroId, recordId) {
+            mostrarActionModal(
+                "Confirmar Eliminación",
+                `¿Está seguro que desea eliminar el registro más reciente de la Capa del Muro ${muroId} en la Zona ${zona}?`,
+                eliminarRegistroMuro,
+                recordId
+            );
+        }
+
+        function mostrarModalEliminarCancha(zona, recordId) {
+            mostrarActionModal(
+                "Confirmar Eliminación",
+                `¿Está seguro que desea eliminar este registro de Cancha en la Zona ${zona}?`,
+                eliminarRegistroCancha,
+                recordId
+            );
+        }
+
+        async function mostrarModalEdicion(tipo, zona, key, recordId) {
+            const { reporteDetallado: datosDB } = await obtenerDatos();
+            const zonaData = datosDB[zona];
+            
+            if (tipo === 'muro' && zonaData && zonaData.muros[key]) {
+                const registro = zonaData.muros[key].find(r => r.id === recordId);
+                if (registro) {
+                    document.getElementById('selectTipo').value = 'muro';
+                    toggleForm();
+                    document.getElementById('cargaTitle').innerText = `Editar Muro ${key} (Capa ${registro.capa})`;
+                    document.getElementById('modificationHint').classList.remove('hidden');
+                    
+                    document.getElementById('recordIdToModify').value = registro.id;
+                    document.getElementById('muroZona').value = zona;
+                    document.getElementById('muroId').value = key;
+                    document.getElementById('muroCapa').value = registro.capa;
+                    document.getElementById('selectTurno').value = registro.turno;
+
+                    document.getElementById('checkParcial').checked = registro.estado === 'parcial';
+                    document.getElementById('checkCompleta').checked = registro.estado === 'completa';
+                    
+                    document.getElementById('muroZona').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    cambiarPestana('carga');
                 }
-            });
-            document.getElementById('totalRegistros').innerText = totalCount;
+            } else {
+                showAlertModal("Registro no encontrado para edición.");
+            }
+        }
 
-            if (zonas.length === 0) {
-                document.getElementById('zoneFilterContainer').innerHTML = ''; 
-                document.getElementById('dashboardContainer').innerHTML = `
+        async function mostrarModalEdicionCancha(zona, recordId) {
+            const { reporteDetallado: datosDB } = await obtenerDatos();
+            const zonaData = datosDB[zona];
+            
+            if (zonaData && zonaData.canchas) {
+                const registro = zonaData.canchas.find(r => r.id === recordId);
+                if (registro) {
+                    document.getElementById('selectTipo').value = 'cancha';
+                    toggleForm();
+                    document.getElementById('cargaTitle').innerText = `Editar Cancha ${registro.numero} (Pileta ${registro.pileta})`;
+                    document.getElementById('modificationHint').classList.remove('hidden');
+                    
+                    document.getElementById('recordIdToModify').value = registro.id;
+                    document.getElementById('canchaZona').value = zona;
+                    document.getElementById('canchaPileta').value = registro.pileta;
+                    document.getElementById('canchaNumero').value = registro.numero;
+                    document.getElementById('canchaMaterial').value = registro.material;
+                    document.getElementById('selectTurno').value = registro.turno;
+                    
+                    document.getElementById('canchaZona').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    cambiarPestana('carga');
+                }
+            } else {
+                showAlertModal("Registro no encontrado para edición.");
+            }
+        }
+        
+        function renderizarFiltros(zonas) {
+            const container = document.getElementById('zoneFilterContainer');
+            container.innerHTML = generarBotonFiltro('TODOS') + zonas.map(z => generarBotonFiltro(z)).join('');
+            
+            // Asegurar que el botón activo esté seleccionado
+            const activeButton = document.getElementById(`btnFilter-${currentZoneFilter}`);
+            if (activeButton) {
+                activeButton.classList.add('bg-mining-accent', 'text-white');
+                activeButton.classList.remove('text-slate-400', 'hover:text-white');
+            }
+        }
+
+        function generarBotonFiltro(zona) {
+            const isActive = zona === currentZoneFilter;
+            return `
+                <button id="btnFilter-${zona}" onclick="filtrarPorZona('${zona}', true)" 
+                        class="px-3 py-1 text-xs font-medium rounded-full transition-colors 
+                        ${isActive ? 'bg-mining-accent text-white' : 'bg-mining-900 text-slate-400 hover:text-white hover:bg-mining-700'}">
+                    ${zona}
+                </button>
+            `;
+        }
+
+        function filtrarPorZona(zona, isClick = false, datosCache = null) {
+            if (isClick) {
+                currentZoneFilter = zona;
+                document.querySelectorAll('#zoneFilterContainer button').forEach(btn => {
+                    btn.classList.remove('bg-mining-accent', 'text-white');
+                    btn.classList.add('bg-mining-900', 'text-slate-400', 'hover:text-white', 'hover:bg-mining-700');
+                });
+                document.getElementById(`btnFilter-${zona}`).classList.add('bg-mining-accent', 'text-white');
+                document.getElementById(`btnFilter-${zona}`).classList.remove('text-slate-400', 'hover:text-white');
+            }
+
+            renderizarContenido(datosCache);
+        }
+
+        async function renderizarContenido(datosCache = null) {
+            const { reporteDetallado: datosDB } = datosCache || await obtenerDatos();
+            const container = document.getElementById('dashboardContainer');
+            container.innerHTML = '';
+            const zonas = Object.keys(datosDB).sort();
+
+            let filteredZones = zonas;
+            if (currentZoneFilter !== 'TODOS') {
+                filteredZones = zonas.filter(z => z === currentZoneFilter);
+            }
+            
+            if (filteredZones.length === 0) {
+                 container.innerHTML = `
                     <div class="text-center py-20 text-slate-600 col-span-1">
-                        <i class="fa-solid fa-layer-group text-6xl mb-4 opacity-20"></i>
-                        <p>No hay registros cargados aún.</p>
-                        <p class="text-sm mt-2">Utilice el Menú de Carga para ingresar datos.</p>
+                        <i class="fa-solid fa-filter-circle-xmark text-6xl mb-4 opacity-20"></i>
+                        <p>No hay registros para la zona seleccionada (${currentZoneFilter}).</p>
                     </div>`;
                 return;
             }
 
-            renderizarFiltros(zonas);
-            
-            if (!zonas.includes(currentZoneFilter) && currentZoneFilter !== 'TODOS') {
-                currentZoneFilter = 'TODOS'; 
-            }
-            
-            filtrarPorZona(currentZoneFilter, false, datosDB); 
-        }
+            filteredZones.forEach(zona => {
+                const dataZona = datosDB[zona];
+                const hasMuros = dataZona.muros && Object.keys(dataZona.muros).length > 0;
+                const hasCanchas = dataZona.canchas && dataZona.canchas.length > 0;
+                
+                let muroContent = hasMuros ? generarTarjetaZona(zona, dataZona, 'muro') : '';
+                let canchaContent = hasCanchas ? generarTarjetaZona(zona, dataZona, 'cancha') : '';
 
-        // ... (funciones generarTarjetaZona, renderizarFiltros, generarBotonFiltro, filtrarPorZona, renderizarContenido de Código 1) ...
+                container.innerHTML += `
+                    <div class="bg-mining-800 p-6 rounded-xl border border-mining-700 shadow-2xl fade-in">
+                        <h2 class="text-3xl font-extrabold text-white mb-6 border-b border-mining-700 pb-3">
+                            ZONA: ${zona}
+                        </h2>
+                        ${muroContent}
+                        ${canchaContent}
+                        
+                        ${(!hasMuros && !hasCanchas) ? `<p class="text-slate-500 p-4">No hay registros de Muros ni Canchas para esta zona.</p>` : ''}
+                    </div>
+                `;
+            });
+        }
         
         // =========================================================================
         // === 5. LÓGICA DE RENDERIZADO (VIEW VISUALIZACION MUROS - CÓDIGO 2) ===
@@ -800,7 +1137,7 @@
             const dashboard = document.getElementById('murosDashboard');
             
             dashboard.innerHTML = '';
-            const clavesMuros = Object.keys(muros).sort();
+            const clavesMuros = Object.keys(muros).sort(compareAlphanumeric);
             
             if (clavesMuros.length === 0) {
                 dashboard.innerHTML = `
@@ -821,13 +1158,16 @@
                         </div>
                         
                         <div class="mt-4 border-t border-mining-700 pt-3">
-                            <p class="text-xs text-slate-400 font-semibold mb-1">Últimos Registros:</p>
-                            ${dataMuro.registros.sort((a, b) => b.fecha.getTime() - a.fecha.getTime()).slice(0, 3).map(r => `
-                                <div class="flex justify-between text-xs text-slate-300">
-                                    <span>Capa ${r.capa}:</span>
-                                    <span class="${r.estado === 'parcial' ? 'text-yellow-400' : 'text-green-400'} font-bold uppercase">${r.estado} (${r.turno})</span>
-                                </div>
-                            `).join('')}
+                            <p class="text-xs text-slate-400 font-semibold mb-1">Últimos Registros (por Capa):</p>
+                            ${Object.keys(dataMuro.capasEstado).sort(compareAlphanumeric).map(capa => {
+                                const r = dataMuro.capasEstado[capa];
+                                return `
+                                    <div class="flex justify-between text-xs text-slate-300">
+                                        <span>Capa ${capa}:</span>
+                                        <span class="${r.estado === 'parcial' ? 'text-yellow-400' : 'text-green-400'} font-bold uppercase">${r.estado}</span>
+                                    </div>
+                                `;
+                            }).join('')}
                         </div>
                     </div>
                 `;
