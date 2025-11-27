@@ -532,36 +532,49 @@
             }
         }
         
+        // =========================================================================
+        // === FUNCIÓN DE TOGGLE CORREGIDA PARA MOSTRAR EL BOTÓN GUARDAR ===
+        // =========================================================================
         function toggleForm() {
             const tipo = document.getElementById('selectTipo').value;
             const form = document.getElementById('dataForm');
             const fieldsMuro = document.getElementById('fieldsMuro');
             const fieldsCancha = document.getElementById('fieldsCancha');
             
-            form.classList.remove('hidden', 'fade-in');
+            // 1. Mostrar el formulario principal (donde está el botón Guardar)
+            form.classList.remove('hidden');
+            form.classList.add('fade-in'); 
+
+            // 2. Ocultar todos los campos específicos primero
             fieldsMuro.classList.add('hidden');
             fieldsCancha.classList.add('hidden');
             
+            // 3. Mostrar solo los campos relevantes y configurar 'required'
             if (tipo === 'muro') {
                 fieldsMuro.classList.remove('hidden');
                 document.getElementById('muroZona').required = true;
                 document.getElementById('muroId').required = true;
                 document.getElementById('muroCapa').required = true;
+                
                 document.getElementById('canchaZona').required = false;
                 document.getElementById('canchaPileta').required = false;
                 document.getElementById('canchaNumero').required = false;
+
             } else if (tipo === 'cancha') {
                 fieldsCancha.classList.remove('hidden');
                 document.getElementById('muroZona').required = false;
                 document.getElementById('muroId').required = false;
                 document.getElementById('muroCapa').required = false;
+
                 document.getElementById('canchaZona').required = true;
                 document.getElementById('canchaPileta').required = true;
                 document.getElementById('canchaNumero').required = true;
             } else {
+                // Si no se selecciona nada (o se resetea), ocultar el formulario
                 form.classList.add('hidden');
             }
         }
+        // =========================================================================
 
         function showAlertModal(message) {
             document.getElementById('alertMessage').innerText = message;
@@ -1064,7 +1077,7 @@
                 const x1_bottom = (width - figura_ancho_bottom) / 2;
                 const x2_bottom = x1_bottom + figura_ancho_bottom;
                 
-                capasPuntos.push(`M ${x1_bottom} ${y_bottom} L ${x2_bottom} ${y_bottom} L ${x2_top} ${y_top} L ${x1_top} ${y_top} Z`);
+                capasPuntos.push(`M ${x1_bottom} ${y_bottom} L ${x2_bottom} ${y_bottom} L ${x2_top} ${y_top} L ${x1_top} ${y1_top} Z`);
             }
 
             const NOMBRES_CAPAS_SVG = [
@@ -1197,6 +1210,26 @@
                     }
                 }
             });
+        }
+
+        // --- FUNCIONES DE RENDERIZADO GENERAL (al final) ---
+        async function renderizarDatos() {
+            const { reporteDetallado: datosDB } = await obtenerDatos();
+            const zonas = Object.keys(datosDB).sort();
+            
+            let totalRecords = 0;
+            zonas.forEach(zona => {
+                if (datosDB[zona].muros) {
+                    Object.values(datosDB[zona].muros).forEach(m => totalRecords += m.length);
+                }
+                if (datosDB[zona].canchas) {
+                    totalRecords += datosDB[zona].canchas.length;
+                }
+            });
+            document.getElementById('totalRegistros').innerText = totalRecords;
+
+            renderizarFiltros(zonas);
+            filtrarPorZona(currentZoneFilter, false, { reporteDetallado: datosDB });
         }
     </script>
 </body>
